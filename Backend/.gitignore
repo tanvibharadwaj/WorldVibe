@@ -1,0 +1,11 @@
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Secret files
+temp_token.txt

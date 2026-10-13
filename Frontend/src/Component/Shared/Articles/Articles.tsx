@@ -1,153 +1,139 @@
-import {
-  Box,
-  Grid,
-  Typography,
-  Chip,
-  Button,
-  Paper,
-} from "@mui/material";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { blogsApi, type Blog } from "../../../services/api";
 
-const articles = [
-  {
-    tag: "Technology",
-    time: "5 min read",
-    title: "The Future of Technology in 2024",
-    description:
-      "Exploring the latest trends and innovations that will shape our digital landscape.",
-  },
-  {
-    tag: "Lifestyle",
-    time: "7 min read",
-    title: "Building Better Habits for Success",
-    description:
-      "Simple strategies to develop habits that lead to personal and professional growth.",
-  },
-  {
-    tag: "Business",
-    time: "6 min read",
-    title: "The Art of Modern Business Strategy",
-    description:
-      "How successful companies are adapting to the changing business environment.",
-  },
-  {
-    tag: "Health",
-    time: "4 min read",
-    title: "Mindful Living: A Daily Practice",
-    description:
-      "Discover how mindfulness can improve mental health and overall well-being.",
-  },
-  {
-    tag: "Education",
-    time: "5 min read",
-    title: "Top Learning Resources in 2025",
-    description:
-      "Explore the best platforms and tools for self-paced and structured learning.",
-  },
-  {
-    tag: "Finance",
-    time: "6 min read",
-    title: "Smart Investing for Beginners",
-    description:
-      "A beginner-friendly guide to building wealth through smart investment habits.",
-  },
-];
+const categoryColors: Record<string, { bg: string; text: string }> = {
+  Technology: { bg: "#ede9fe", text: "#6d28d9" },
+  Lifestyle:  { bg: "#fce7f3", text: "#9d174d" },
+  Business:   { bg: "#d1fae5", text: "#065f46" },
+  Health:     { bg: "#fee2e2", text: "#991b1b" },
+  Education:  { bg: "#dbeafe", text: "#1e40af" },
+  Finance:    { bg: "#fef9c3", text: "#854d0e" },
+  Travel:     { bg: "#e0f2fe", text: "#0369a1" },
+  Other:      { bg: "#f3f4f6", text: "#374151" },
+};
 
-const Articles = () => {
+const ArticleCard = ({ item, index }: { item: Blog; index: number }) => {
   const navigate = useNavigate();
-
-  const handleReadMore = (tag: string) => {
-    navigate(`/blogs?tag=${encodeURIComponent(tag)}`);
-  };
+  const [hovered, setHovered] = useState(false);
+  const colors = categoryColors[item.category] || categoryColors.Other;
 
   return (
-    <Box sx={{ py: 6, px: 2, backgroundColor: "#f8f8fb", textAlign: "center" , pb: 5 }}>
-      <Typography variant="h4" fontWeight="bold" gutterBottom>
-        Featured Articles
-      </Typography>
-      <Typography variant="subtitle1" color="text.secondary" mb={5}>
-        Discover our most popular and recent articles across various topics
-      </Typography>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      onClick={() => navigate(`/blog?category=${encodeURIComponent(item.category)}`)}
+      style={{
+        background: "#fff",
+        borderRadius: 20,
+        padding: "28px",
+        border: "1px solid",
+        borderColor: hovered ? "rgba(124,58,237,0.3)" : "#f0f0f5",
+        boxShadow: hovered ? "0 20px 60px rgba(124,58,237,0.12)" : "0 2px 20px rgba(0,0,0,0.04)",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        transform: hovered ? "translateY(-6px)" : "translateY(0)",
+        display: "flex", flexDirection: "column", gap: 14,
+        animation: `fadeInUp 0.5s ease ${index * 0.1}s both`,
+      }}
+    >
+      {/* Top row */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{
+          padding: "5px 14px", borderRadius: 50,
+          background: colors.bg, color: colors.text,
+          fontSize: 12, fontWeight: 700,
+        }}>{item.category}</span>
+        <span style={{ fontSize: 12, color: "#9ca3af", fontWeight: 500 }}>{item.readTime}</span>
+      </div>
 
-      <Grid container spacing={4} justifyContent="center">
-        {articles.map((item, index) => (
-          <Grid size={{sm : 10, md : 5, lg : 3.5 }} key={index}>
-            <Paper
-              elevation={4}
-              sx={{
-                m: 2,
-                p: 3,
-                height: "70%",
-                borderRadius: 3,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "space-between",
-                textAlign: "left",
-                transition: "transform 0.3s",
-                "&:hover": {
-                  transform: "translateY(-5px)",
-                },
-              }}
-            >
-              <Box display="flex" justifyContent="space-between" mb={2}>
-                <Chip
-                  label={item.tag}
-                  sx={{
-                    backgroundColor: "#e6d5ff",
-                    color: "#7b53c1",
-                    fontWeight: 600,
-                    fontSize: "0.75rem",
-                  }}
-                />
-                <Typography variant="caption" color="text.secondary">
-                  {item.time}
-                </Typography>
-              </Box>
+      {/* Title */}
+      <h3 style={{
+        fontSize: 17, fontWeight: 700, color: "#111827",
+        lineHeight: 1.4, margin: 0,
+        background: hovered ? "linear-gradient(135deg, #7c3aed, #c026d3)" : "none",
+        WebkitBackgroundClip: hovered ? "text" : "initial",
+        WebkitTextFillColor: hovered ? "transparent" : "#111827",
+        transition: "all 0.3s ease",
+      }}>{item.title}</h3>
 
-              <Typography
-                variant="h6"
-                fontWeight={600}
-                mb={1}
-                sx={{
-                  fontSize: "1rem",
-                  lineHeight: 1.4,
-                }}
-              >
-                {item.title}
-              </Typography>
+      {/* Summary */}
+      <p style={{
+        fontSize: 14, color: "#6b7280", lineHeight: 1.6, margin: 0,
+        display: "-webkit-box", WebkitBoxOrient: "vertical",
+        WebkitLineClamp: 2, overflow: "hidden",
+      }}>{item.summary}</p>
 
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                mb={3}
-                sx={{ fontSize: "0.9rem" }}
-              >
-                {item.description}
-              </Typography>
+      {/* Footer */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
+        <span style={{ fontSize: 13, color: "#9ca3af" }}>By {item.authorName}</span>
+        <span style={{
+          fontSize: 13, fontWeight: 600,
+          color: hovered ? "#7c3aed" : "#9ca3af",
+          transition: "all 0.3s",
+          display: "flex", alignItems: "center", gap: 4,
+        }}>Read More →</span>
+      </div>
+    </div>
+  );
+};
 
-              <Button
-                variant="contained"
-                size="small"
-                onClick={() => handleReadMore(item.tag)}
-                sx={{
-                  alignSelf: "flex-start",
-                  backgroundColor: "#e7e4ecff",
-                  textTransform: "none",
-                  fontWeight: 500,
-                  color: "#7b53c1",
-                  "&:hover": {
-                    backgroundColor: "#927ac4ff",
-                    color: "#fff",
-                  },
-                }}
-              >
-                Read More →
-              </Button>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
-    </Box>
+const Articles = () => {
+  const [articles, setArticles] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    blogsApi.getAll({ limit: 6 })
+      .then((res) => setArticles(res.blogs))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <section style={{ padding: "100px 24px", background: "linear-gradient(180deg, #fafafa 0%, #f5f3ff 100%)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+
+        {/* Section header */}
+        <div style={{ textAlign: "center", marginBottom: 64 }}>
+          <span style={{
+            display: "inline-block", padding: "6px 18px", borderRadius: 50,
+            background: "rgba(124,58,237,0.08)", color: "#7c3aed",
+            fontSize: 13, fontWeight: 700, marginBottom: 16, letterSpacing: 1,
+            textTransform: "uppercase",
+          }}>Featured Articles</span>
+          <h2 style={{
+            fontSize: "clamp(28px, 4vw, 44px)", fontWeight: 800,
+            color: "#111827", marginBottom: 16, letterSpacing: "-1px",
+          }}>
+            Stories Worth{" "}
+            <span style={{
+              background: "linear-gradient(135deg, #7c3aed, #c026d3)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+            }}>Reading</span>
+          </h2>
+          <p style={{ fontSize: 17, color: "#6b7280", maxWidth: 560, margin: "0 auto", lineHeight: 1.7 }}>
+            Hand-picked articles across technology, lifestyle, and business from our top writers.
+          </p>
+        </div>
+
+        {/* Grid */}
+        {loading ? (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
+            {[...Array(6)].map((_, i) => (
+              <div key={i} style={{
+                height: 240, borderRadius: 20,
+                background: "linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%)",
+                backgroundSize: "200% 100%",
+                animation: "shimmer 1.5s infinite",
+              }} />
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
+            {articles.map((item, i) => <ArticleCard key={item._id} item={item} index={i} />)}
+          </div>
+        )}
+      </div>
+    </section>
   );
 };
 

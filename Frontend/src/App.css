@@ -1,7 +1,28 @@
+/* Global layout reset */
 body, html, #root {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  width: 100vw;
+  width: 100%;
   overflow-x: hidden;
+}
+
+/* Gradient text utility */
+.gradient-text {
+  background: linear-gradient(135deg, #7c3aed, #c026d3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Page top padding for fixed header */
+.page-top {
+  padding-top: 72px;
 }

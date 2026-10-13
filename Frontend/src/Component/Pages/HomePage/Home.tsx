@@ -1,139 +1,116 @@
 import React from "react";
-import { FaBookOpen, FaUsers, FaChartLine } from "react-icons/fa";
-import bgImage from "../../../assets/bg-img.webp";
+import { Link } from "react-router-dom";
+import { FaBookOpen, FaUsers, FaChartLine, FaPen, FaArrowRight } from "react-icons/fa";
+import { useAuth } from "../../../context/AuthContext";
 
 const Home: React.FC = () => {
-  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const { isLoggedIn } = useAuth();
 
   const stats = [
-    {
-      icon: <FaBookOpen size={36} color="#a855f7" />,
-      number: "500+",
-      label: "Articles Published",
-    },
-    {
-      icon: <FaUsers size={36} color="#a855f7" />,
-      number: "10K+",
-      label: "Active Readers",
-    },
-    {
-      icon: <FaChartLine size={36} color="#a855f7" />,
-      number: "50K+",
-      label: "Monthly Views",
-    },
+    { icon: <FaBookOpen size={28} />, number: "500+", label: "Articles Published" },
+    { icon: <FaUsers size={28} />, number: "10K+", label: "Active Readers" },
+    { icon: <FaChartLine size={28} />, number: "50K+", label: "Monthly Views" },
+    { icon: <FaPen size={28} />, number: "200+", label: "Active Writers" },
   ];
 
-  const styles = {
-    wrapper: {
-      backgroundImage: `url(${bgImage})`,
-      backgroundRepeat: "no-repeat",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      minHeight: "100vh",
-      width: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      flexDirection: "column" as "column",
-      textAlign: "center" as "center",
-      padding: "20px",
-      color: "#fff",
-    },
-    heading: {
-      fontSize: "48px",
-      fontWeight: 700,
-      marginBottom: "16px",
-    },
-    highlight: {
-      background: "linear-gradient(90deg, #9469deff, #c088caff)",
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-    },
-    subheading: {
-      fontSize: "18px",
-      maxWidth: "800px",
-      lineHeight: 1.6,
-      fontWeight: 500,
-      marginBottom: "32px",
-    },
-    buttons: {
-      display: "flex",
-      justifyContent: "center",
-      gap: "16px",
-      flexWrap: "wrap" as "wrap",
-      marginBottom: "40px",
-    },
-    btnPrimary: {
-      background: "linear-gradient(90deg, #b388ff , #e1bee7)",
-      padding: "10px 24px",
-      color: "#fff",
-      border: "none",
-      borderRadius: "8px",
-      fontWeight: 600,
-      cursor: "pointer",
-      textDecoration: "none",
-    },
-    btnSecondary: {
-      padding: "10px 24px",
-      color: "#fff",
-      border: "2px solid #fff",
-      borderRadius: "8px",
-      background: "transparent",
-      fontWeight: 600,
-      cursor: "pointer",
-      textDecoration: "none",
-    },
-    stats: {
-      display: "flex",
-      justifyContent: "center",
-      flexWrap: "wrap" as "wrap",
-      gap: "100px",
-      marginTop: "50px",
-    },
-    statBox: {
-      textAlign: "center" as "center",
-      gap: "28px",
-      minWidth: "140px",
-    },
-    statIcon: {
-      marginBottom: "20px",
-    },
-    statNumber: {
-      fontSize: "30px",
-      fontWeight: 700,
-    },
-    statLabel: {
-      fontSize: "25px",
-      color: "#ddd",
-    },
-  };
-
   return (
-    <div style={styles.wrapper}>
-      <h1 style={styles.heading}>
-        Welcome to <span style={styles.highlight}>WordVibe</span>
-      </h1>
-      <p style={styles.subheading}>
-        Step into the world of WordVibe — a place where creativity meets clarity. Whether you're a passionate writer or an eager reader, our platform lets you explore, express, and elevate your thoughts through powerful storytelling, insightful articles, and engaging conversations that leave an impact.
-      </p>
+    <div style={{ background: "linear-gradient(160deg, #0f0c29, #302b63, #24243e)", minHeight: "100vh", paddingTop: 68, overflow: "hidden", position: "relative" }}>
 
-      <div style={styles.buttons}>
-        <a href="/blog" style={styles.btnPrimary}>
-          Explore Blogs →
-        </a>
-        <a href={isLoggedIn ? "/write" : "/signup"} style={styles.btnSecondary}>
-          Start Writing
-        </a>
-      </div>
+      {/* Animated background orbs */}
+      <div style={{ position: "absolute", top: "10%", left: "5%", width: 400, height: 400, background: "radial-gradient(circle, rgba(124,58,237,0.25) 0%, transparent 70%)", borderRadius: "50%", filter: "blur(40px)", animation: "float 6s ease-in-out infinite" }} />
+      <div style={{ position: "absolute", top: "30%", right: "5%", width: 350, height: 350, background: "radial-gradient(circle, rgba(192,38,211,0.2) 0%, transparent 70%)", borderRadius: "50%", filter: "blur(40px)", animation: "float 8s ease-in-out infinite reverse" }} />
+      <div style={{ position: "absolute", bottom: "10%", left: "40%", width: 300, height: 300, background: "radial-gradient(circle, rgba(99,102,241,0.2) 0%, transparent 70%)", borderRadius: "50%", filter: "blur(40px)", animation: "float 7s ease-in-out infinite 1s" }} />
 
-      <div style={styles.stats}>
-        {stats.map((item, index) => (
-          <div key={index} style={styles.statBox}>
-            <div style={styles.statIcon}>{item.icon}</div>
-            <div style={styles.statNumber}>{item.number}</div>
-            <div style={styles.statLabel}>{item.label}</div>
+      {/* Hero Content */}
+      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "calc(100vh - 68px)", padding: "60px 24px 40px", textAlign: "center" }}>
+
+        {/* Badge */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 8,
+          background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.4)",
+          borderRadius: 50, padding: "8px 20px", marginBottom: 32,
+          backdropFilter: "blur(10px)",
+        }}>
+          <span style={{ width: 8, height: 8, background: "#a78bfa", borderRadius: "50%", display: "inline-block", animation: "pulse-ring 2s infinite" }} />
+          <span style={{ color: "#c4b5fd", fontSize: 14, fontWeight: 600 }}>The Modern Blogging Platform</span>
+        </div>
+
+        {/* Heading */}
+        <h1 style={{ fontSize: "clamp(40px, 7vw, 80px)", fontWeight: 900, lineHeight: 1.1, marginBottom: 24, maxWidth: 800, letterSpacing: "-2px" }}>
+          <span style={{ color: "#fff" }}>Where Stories</span>
+          <br />
+          <span style={{
+            background: "linear-gradient(135deg, #a78bfa, #f0abfc, #818cf8)",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          }}>Come Alive</span>
+        </h1>
+
+        <p style={{ fontSize: "clamp(16px, 2.5vw, 20px)", color: "rgba(255,255,255,0.65)", maxWidth: 620, lineHeight: 1.7, marginBottom: 48, fontWeight: 400 }}>
+          Join thousands of writers and readers on WordVibe. Create, discover, and share stories that inspire, educate, and connect people across the globe.
+        </p>
+
+        {/* CTA Buttons */}
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", marginBottom: 80 }}>
+          <Link to="/blog" style={{
+            display: "inline-flex", alignItems: "center", gap: 10,
+            padding: "16px 36px", borderRadius: 14,
+            background: "linear-gradient(135deg, #7c3aed, #c026d3)",
+            color: "#fff", textDecoration: "none", fontSize: 16, fontWeight: 700,
+            boxShadow: "0 8px 30px rgba(124,58,237,0.45)",
+            transition: "all 0.3s ease",
+          }}>
+            Explore Blogs <FaArrowRight size={14} />
+          </Link>
+          <Link to={isLoggedIn ? "/write" : "/signup"} style={{
+            display: "inline-flex", alignItems: "center", gap: 10,
+            padding: "16px 36px", borderRadius: 14,
+            background: "rgba(255,255,255,0.1)", border: "1.5px solid rgba(255,255,255,0.25)",
+            color: "#fff", textDecoration: "none", fontSize: 16, fontWeight: 700,
+            backdropFilter: "blur(10px)",
+          }}>
+            Start Writing ✏️
+          </Link>
+        </div>
+
+        {/* Stats */}
+        <div style={{
+          display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
+          gap: 16, width: "100%", maxWidth: 800,
+        }}>
+          {stats.map((item, i) => (
+            <div key={i} style={{
+              background: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 20, padding: "28px 20px",
+              backdropFilter: "blur(10px)",
+              transition: "all 0.3s ease",
+            }}>
+              <div style={{ color: "#a78bfa", marginBottom: 12, display: "flex", justifyContent: "center" }}>
+                {item.icon}
+              </div>
+              <div style={{ fontSize: 32, fontWeight: 800, color: "#fff", marginBottom: 4 }}>
+                {item.number}
+              </div>
+              <div style={{ fontSize: 13, color: "rgba(255,255,255,0.55)", fontWeight: 500 }}>
+                {item.label}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Scroll indicator */}
+        <div style={{ marginTop: 60, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+          <span style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, fontWeight: 500, letterSpacing: 2, textTransform: "uppercase" }}>Scroll to explore</span>
+          <div style={{
+            width: 24, height: 40, border: "2px solid rgba(255,255,255,0.2)",
+            borderRadius: 12, display: "flex", justifyContent: "center", padding: 4,
+          }}>
+            <div style={{
+              width: 4, height: 10, background: "#a78bfa",
+              borderRadius: 2, animation: "float 1.5s ease-in-out infinite",
+            }} />
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );

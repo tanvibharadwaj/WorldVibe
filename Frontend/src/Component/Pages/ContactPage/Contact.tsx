@@ -1,199 +1,142 @@
-import {
-  Box,
-  Button,
-  Grid,
-  TextField,
-  Typography,
-  Stack,
-  Chip,
-} from "@mui/material";
-import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
-import LocationOnIcon from "@mui/icons-material/LocationOn";
-import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import SendIcon from "@mui/icons-material/Send";
-import NearMeIcon from "@mui/icons-material/NearMe";
+import { useState } from "react";
+import { contactApi } from "../../../services/api";
 
 const Contact = () => {
+  const [form, setForm] = useState({ firstName: "", lastName: "", email: "", subject: "", message: "" });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm(p => ({ ...p, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSuccess(""); setError(""); setLoading(true);
+    try {
+      const res = await contactApi.send(form);
+      setSuccess(res.message);
+      setForm({ firstName: "", lastName: "", email: "", subject: "", message: "" });
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to send message.");
+    } finally { setLoading(false); }
+  };
+
+  const inputStyle = {
+    width: "100%", padding: "14px 18px", borderRadius: 12,
+    border: "1.5px solid #e5e7eb", fontSize: 15,
+    outline: "none", boxSizing: "border-box" as const,
+    fontFamily: "inherit", background: "#fafafa",
+    transition: "border-color 0.2s, background 0.2s",
+  };
+
+  const labelStyle = { display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 } as const;
+
   return (
-    <Box sx={{ px: { xs: 2, md: 10 }, py: 6, mt: 5}}>
-      <Box textAlign="center" mb={6}>
-        <Chip
-          label="Contact Us"
-          color="secondary"
-          sx={{ mb: 2, fontWeight: "bold" }}
-        />
-        <Typography variant="h4" fontWeight="bold" color="#7a06beff">
-          Let's Start a Conversation
-        </Typography>
-        <Typography variant="body1" color="text.secondary" mt={1}>
-          Have questions, suggestions, or just want to say hello? We'd love to
-          hear from you.
-        </Typography>
-      </Box>
+    <div style={{ paddingTop: 68 }}>
+      {/* Hero */}
+      <div style={{ background: "linear-gradient(160deg, #0f0c29, #302b63, #24243e)", padding: "80px 24px 60px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "10%", left: "15%", width: 300, height: 300, background: "radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%)", borderRadius: "50%", filter: "blur(50px)" }} />
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <span style={{ display: "inline-block", padding: "6px 18px", borderRadius: 50, background: "rgba(167,139,250,0.15)", color: "#c4b5fd", fontSize: 13, fontWeight: 700, marginBottom: 20, border: "1px solid rgba(167,139,250,0.2)" }}>Contact Us</span>
+          <h1 style={{ fontSize: "clamp(32px, 5vw, 58px)", fontWeight: 900, color: "#fff", marginBottom: 16, letterSpacing: "-1.5px" }}>
+            Let's Start a{" "}
+            <span style={{ background: "linear-gradient(135deg, #a78bfa, #f0abfc)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>Conversation</span>
+          </h1>
+          <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 17, maxWidth: 500, margin: "0 auto" }}>
+            Have questions or suggestions? We'd love to hear from you.
+          </p>
+        </div>
+      </div>
 
-      <Grid container spacing={6}>
-        {/* Contact Form */}
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Box sx={{ p: 5 }}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              <NearMeIcon sx={{ verticalAlign: "middle", mr: 1 }} /> Send us a
-              Message
-            </Typography>
-            <Typography variant="body2" color="text.secondary" gutterBottom>
-              Fill out the form below and we'll get back to you as soon as
-              possible.
-            </Typography>
-            <Grid container spacing={2} mt={1}>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  fullWidth
-                  required
-                  label="First Name"
-                  defaultValue="John"
-                />
-              </Grid>
-              <Grid size={{ xs: 12, md: 6 }}>
-                <TextField
-                  fullWidth
-                  required
-                  label="Last Name"
-                  defaultValue="Doe"
-                />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth
-                  required
-                  label="Email Address"
-                  defaultValue="john.doe@example.com"
-                />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth
-                  required
-                  label="Subject"
-                  defaultValue="What's this about?"
-                />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <TextField
-                  fullWidth
-                  required
-                  label="Message"
-                  multiline
-                  rows={4}
-                  defaultValue="Tell us more about your inquiry..."
-                />
-              </Grid>
-              <Grid size={{ xs: 12 }}>
-                <Button
-                  variant="contained"
-                  endIcon={<SendIcon />}
-                  fullWidth
-                  sx={{
-                    backgroundColor: "#e393efff",
-                    "&:hover": {
-                      backgroundColor: "#9538cbff",
-                      transform: "translateY(-2px)",
-                    },
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  Send Message
-                </Button>
-              </Grid>
-            </Grid>
-            <Typography
-              variant="caption"
-              color="text.secondary"
-              mt={2}
-              display="block"
-              textAlign={"center"}
-            >
-              We typically respond within 24 hours during business days.
-            </Typography>
-          </Box>
-        </Grid>
+      {/* Main content */}
+      <div style={{ padding: "80px 24px", background: "#fff" }}>
+        <div style={{ maxWidth: 1100, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 60, alignItems: "start" }}>
 
-        {/* Contact Info */}
-        <Grid size={{ xs: 12, md: 5 }} p={5}>
-          <Typography variant="h4" fontWeight="bold" gutterBottom>
-            Get in Touch
-          </Typography>
-          <Stack spacing={2}>
+          {/* Form */}
+          <div style={{ background: "#fff", borderRadius: 24, padding: "48px", border: "1px solid #f0f0f5", boxShadow: "0 8px 40px rgba(0,0,0,0.06)" }}>
+            <h2 style={{ fontSize: 24, fontWeight: 800, color: "#111827", marginBottom: 8 }}>Send a Message</h2>
+            <p style={{ color: "#6b7280", fontSize: 15, marginBottom: 32 }}>Fill in the form and we'll reply within 24 hours.</p>
+
+            {success && <div style={{ marginBottom: 20, padding: "14px 18px", borderRadius: 12, background: "#d1fae5", color: "#065f46", fontSize: 14, fontWeight: 500 }}>✅ {success}</div>}
+            {error && <div style={{ marginBottom: 20, padding: "14px 18px", borderRadius: 12, background: "#fee2e2", color: "#991b1b", fontSize: 14 }}>⚠️ {error}</div>}
+
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+                <div>
+                  <label style={labelStyle}>First Name</label>
+                  <input style={inputStyle} name="firstName" value={form.firstName} onChange={handleChange} placeholder="John" required
+                    onFocus={(e) => { e.target.style.borderColor = "#7c3aed"; e.target.style.background = "#fff"; }}
+                    onBlur={(e) => { e.target.style.borderColor = "#e5e7eb"; e.target.style.background = "#fafafa"; }} />
+                </div>
+                <div>
+                  <label style={labelStyle}>Last Name</label>
+                  <input style={inputStyle} name="lastName" value={form.lastName} onChange={handleChange} placeholder="Doe" required
+                    onFocus={(e) => { e.target.style.borderColor = "#7c3aed"; e.target.style.background = "#fff"; }}
+                    onBlur={(e) => { e.target.style.borderColor = "#e5e7eb"; e.target.style.background = "#fafafa"; }} />
+                </div>
+              </div>
+              <div>
+                <label style={labelStyle}>Email Address</label>
+                <input style={inputStyle} type="email" name="email" value={form.email} onChange={handleChange} placeholder="john@example.com" required
+                  onFocus={(e) => { e.target.style.borderColor = "#7c3aed"; e.target.style.background = "#fff"; }}
+                  onBlur={(e) => { e.target.style.borderColor = "#e5e7eb"; e.target.style.background = "#fafafa"; }} />
+              </div>
+              <div>
+                <label style={labelStyle}>Subject</label>
+                <input style={inputStyle} name="subject" value={form.subject} onChange={handleChange} placeholder="How can we help?" required
+                  onFocus={(e) => { e.target.style.borderColor = "#7c3aed"; e.target.style.background = "#fff"; }}
+                  onBlur={(e) => { e.target.style.borderColor = "#e5e7eb"; e.target.style.background = "#fafafa"; }} />
+              </div>
+              <div>
+                <label style={labelStyle}>Message</label>
+                <textarea style={{ ...inputStyle, resize: "vertical", minHeight: 140 }} name="message" value={form.message} onChange={handleChange} placeholder="Tell us more..." required
+                  onFocus={(e) => { e.target.style.borderColor = "#7c3aed"; e.target.style.background = "#fff"; }}
+                  onBlur={(e) => { e.target.style.borderColor = "#e5e7eb"; e.target.style.background = "#fafafa"; }} />
+              </div>
+              <button type="submit" disabled={loading} style={{
+                padding: "16px", borderRadius: 14, border: "none",
+                background: loading ? "#c4b5fd" : "linear-gradient(135deg, #7c3aed, #c026d3)",
+                color: "#fff", fontSize: 16, fontWeight: 700, cursor: loading ? "not-allowed" : "pointer",
+                boxShadow: loading ? "none" : "0 8px 25px rgba(124,58,237,0.35)",
+              }}>{loading ? "Sending..." : "Send Message →"}</button>
+            </form>
+          </div>
+
+          {/* Info cards */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             {[
-              {
-                icon: <EmailIcon sx={{ color: "white" }} />,
-                title: "Email Us",
-                subtitle: "Get in touch via email",
-                detail: "hello@wordvibe.com",
-              },
-              {
-                icon: <PhoneIcon sx={{ color: "white" }} />,
-                title: "Call Us",
-                subtitle: "Speak with our team",
-                detail: "+1 (555) 123-4567",
-              },
-              {
-                icon: <LocationOnIcon sx={{ color: "white" }} />,
-                title: "Visit Us",
-                subtitle: "Our headquarters",
-                detail: "San Francisco, CA",
-              },
-              {
-                icon: <AccessTimeIcon sx={{ color: "white" }} />,
-                title: "Office Hours",
-                subtitle: "Monday - Friday",
-                detail: "9:00 AM - 6:00 PM PST",
-              },
-            ].map((item, index) => (
-              <Box
-                key={index}
-                sx={{
-                  transition: "all 0.3s ease",
-                  borderRadius: 2,
-                  px: 2,
-                  py: 2,
-                  "&:hover": {
-                    boxShadow: 3,
-                    backgroundColor: "#f9f9f9",
-                    transform: "translateY(-2px)",
-                  },
-                }}
+              { emoji: "📧", title: "Email Us", sub: "Get in touch via email", detail: "hello@wordvibe.com", color: "#7c3aed", bg: "#f5f3ff" },
+              { emoji: "📞", title: "Call Us", sub: "Speak with our team", detail: "+1 (555) 123-4567", color: "#0891b2", bg: "#f0f9ff" },
+              { emoji: "📍", title: "Visit Us", sub: "Our headquarters", detail: "San Francisco, CA", color: "#059669", bg: "#f0fdf4" },
+              { emoji: "🕐", title: "Office Hours", sub: "Monday – Friday", detail: "9:00 AM – 6:00 PM PST", color: "#d97706", bg: "#fffbeb" },
+            ].map((item, i) => (
+              <div key={i} style={{
+                display: "flex", alignItems: "center", gap: 20,
+                padding: "24px 28px", borderRadius: 20,
+                border: "1px solid #f0f0f5", background: "#fff",
+                boxShadow: "0 2px 16px rgba(0,0,0,0.03)",
+                transition: "all 0.3s ease",
+                animation: `fadeInUp 0.5s ease ${i * 0.1}s both`,
+              }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLDivElement).style.transform = "translateX(6px)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 30px rgba(0,0,0,0.08)"; }}
+                onMouseLeave={(e) => { (e.currentTarget as HTMLDivElement).style.transform = "translateX(0)"; (e.currentTarget as HTMLDivElement).style.boxShadow = "0 2px 16px rgba(0,0,0,0.03)"; }}
               >
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Box
-                    sx={{
-                      background: "linear-gradient(135deg, #b339f0ff, #aa52bcff)",
-                      p: 1.2,
-                      borderRadius: "15%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      minWidth: "40px",
-                      minHeight: "40px",
-                    }}
-                  >
-                    {item.icon}
-                  </Box>
-                  <Box>
-                    <Typography fontWeight="bold" mb={0.5}>
-                      {item.title}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {item.subtitle}
-                    </Typography>
-                    <Typography color="secondary">{item.detail}</Typography>
-                  </Box>
-                </Stack>
-              </Box>
+                <div style={{ width: 52, height: 52, borderRadius: 14, background: item.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0 }}>
+                  {item.emoji}
+                </div>
+                <div>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: "#111827", marginBottom: 2 }}>{item.title}</div>
+                  <div style={{ fontSize: 13, color: "#9ca3af", marginBottom: 4 }}>{item.sub}</div>
+                  <div style={{ fontSize: 15, fontWeight: 600, color: item.color }}>{item.detail}</div>
+                </div>
+              </div>
             ))}
-          </Stack>
-        </Grid>
-      </Grid>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 

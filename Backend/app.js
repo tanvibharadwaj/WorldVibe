@@ -1,59 +1,69 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var mongoose = require("mongoose");
+require('dotenv').config();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var app = express();
-
-const uri = "mongodb+srv://tanvib895:tanvi12345@cluster1.ndoabmo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster1";
-async function connectDB() {
-  try {
-    await mongoose.connect(uri, {});
-    console.log("connected to mongoDB");
-  } catch (error) {
-    console.error("Error connecting to mongoDB");
-  }
-}
-connectDB();
-
+const express = require('express');
 const cors = require('cors');
-app.use(cors());
+const mongoose = require('mongoose');
+const morgan = require('morgan');
 
+const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// ─── CORS ────────────────────────────────────────────────────────────────────
+app.use(
+  cors({
+    origin: [process.env.CLIENT_URL || 'http://localhost:5173'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// ─── Body Parsers ─────────────────────────────────────────────────────────────
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// ─── Logger (dev only) ────────────────────────────────────────────────────────
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// ─── MongoDB ──────────────────────────────────────────────────────────────────
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log('✅  MongoDB connected'))
+  .catch((err) => {
+    console.error('❌  MongoDB connection error:', err.message);
+    console.error('   → Check your MONGO_URI in .env and make sure your Atlas cluster is running.');
+    // Do NOT exit — let the process stay up so you can fix the URI without restarting
+  });
+
+// ─── Routes ───────────────────────────────────────────────────────────────────
+app.use('/api/auth',      require('./routes/auth'));
+app.use('/api/blogs',     require('./routes/blogs'));
+app.use('/api/contact',   require('./routes/contact'));
+app.use('/api/subscribe', require('./routes/subscribe'));
+
+// ─── Health check ─────────────────────────────────────────────────────────────
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'WordVibe API is running',
+    environment: process.env.NODE_ENV,
+    timestamp: new Date().toISOString(),
+  });
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+// ─── 404 ──────────────────────────────────────────────────────────────────────
+app.use((req, res) => {
+  res.status(404).json({ success: false, message: `Route ${req.originalUrl} not found.` });
 });
 
-
+// ─── Global Error Handler ─────────────────────────────────────────────────────
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({
+    success: false,
+    message: process.env.NODE_ENV === 'production' ? 'Something went wrong.' : err.message,
+  });
+});
 
 module.exports = app;

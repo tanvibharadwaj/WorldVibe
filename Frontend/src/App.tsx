@@ -15,77 +15,64 @@ import Contact from "./Component/Pages/ContactPage/Contact";
 import HelpCenter from "./Component/Shared/HelpCenter/Help";
 import Connect from "./Component/Shared/Connections/connect";
 import BlogPage from "./Component/Pages/BlogPage/BlogPage";
-import Blogs from "./Component/Shared/Blogs/Blogs";
-import Update from "./Component/Shared/StayUpdate/Update";
-
-
+import WriteBlog from "./Component/Pages/WriteBlogPage/WriteBlog";
 
 const App = () => {
   return (
-    <>
-      <BrowserRouter>
-        <Header />
+    <BrowserRouter>
+      <Header />
+      <Routes>
 
-        <Routes>
-         <Route
-            path="/"
-            element={
-              <>
-                <Home />
-                <Articles />
-                <SubscribeSection />
-              </>
-            }
-          />
+        {/* Home */}
+        <Route
+          path="/"
+          element={
+            <>
+              <Home />
+              <Articles />
+              <SubscribeSection />
+            </>
+          }
+        />
 
-          <Route
-            path="/About"
-            element={
-              <>
-                <About />
-                <Drives />
-                <Teams />
-                <Touch />
-              </>
-            }
-          />
+        {/* About */}
+        <Route
+          path="/about"
+          element={
+            <>
+              <About />
+              <Drives />
+              <Teams />
+              <Touch />
+            </>
+          }
+        />
 
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Signup" element={<Signup />} />
-          <Route
-            path="/Contact"
-            element={
-              <>
-                <Contact />
-                 <HelpCenter /> 
-                <Connect />
-              </>
-            }
-          /> 
+        {/* Auth */}
+        <Route path="/login"  element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
 
-          <Route
-            path="/Blog"
-            element={
-              <>
-                <BlogPage />
-                <Blogs />
-                <Update />
-              </>
-            }
-          />
+        {/* Contact */}
+        <Route
+          path="/contact"
+          element={
+            <>
+              <Contact />
+              <HelpCenter />
+              <Connect />
+            </>
+          }
+        />
 
-          {/* <Route
-            path="/WriteBlog"
-            element={
-              <>
-                <WriteBlog /> <Write/>
-              </>
-            }
-          /> */}
-        </Routes> 
-        <Footer />
-      </BrowserRouter>
-    </>
+        {/* Blog listing */}
+        <Route path="/blog" element={<BlogPage />} />
+
+        {/* Write a blog (auth-guarded inside the component) */}
+        <Route path="/write" element={<WriteBlog />} />
+
+      </Routes>
+      <Footer />
+    </BrowserRouter>
   );
 };
 
